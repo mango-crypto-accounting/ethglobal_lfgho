@@ -17,7 +17,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -30,16 +29,12 @@ import {
 } from "@/components/ui/popover";
 import { toast } from "@/components/ui/use-toast";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InvoiceButton } from "./InvoiceButton";
 import InvoiceDetails from "./InvoiceDetails";
+import { useAccount } from "wagmi";
+
+import { useState } from "react";
 
 type CardProps = React.ComponentProps<typeof Card>;
 
@@ -56,6 +51,8 @@ const FormSchema = z.object({
 });
 
 export default function InvoiceCard({ className, ...props }: CardProps) {
+  const { address } = useAccount();
+  const [triggerWidth, setTriggerWidth] = useState(0);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
@@ -82,74 +79,83 @@ export default function InvoiceCard({ className, ...props }: CardProps) {
               </div>
             </CardTitle>
           </CardHeader>
-          <CardContent className="grid gap-4 pb-0">
+          <CardContent className="grid">
             <InvoiceDetails />
-            <FormField
-              control={form.control}
-              name="paymentMethod"
-              render={({ field }) => (
-                <FormItem className="flex flex-col w-full">
-                  <FormLabel>Payment method</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className={cn(
-                            "w-full justify-between",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value
-                            ? tokens.find(
-                                (token) => token.value === field.value
-                              )?.label
-                            : "Select a token"}
-                          <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-0">
-                      <Command>
-                        <CommandInput
-                          placeholder="Search tokens..."
-                          className="h-9"
-                        />
-                        <CommandEmpty>No token found.</CommandEmpty>
-                        <CommandGroup>
-                          {tokens.map((token) => (
-                            <CommandItem
-                              value={token.label}
-                              key={token.value}
-                              onSelect={() => {
-                                form.setValue("paymentMethod", token.value);
-                              }}
-                            >
-                              {token.label}
-                              <CheckIcon
-                                className={cn(
-                                  "ml-auto h-4 w-4",
-                                  token.value === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
+            {address && (
+              <FormField
+                control={form.control}
+                name="paymentMethod"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col w-full mb-6">
+                    <FormLabel>Payment method</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              "w-full justify-between",
+                              !field.value && "text-muted-foreground"
+                            )}
+                            ref={(node) => {
+                              if (node) setTriggerWidth(node.offsetWidth);
+                            }}
+                          >
+                            {field.value
+                              ? tokens.find(
+                                  (token) => token.value === field.value
+                                )?.label
+                              : "Select a token"}
+                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-          <CardFooter>
+                      <PopoverContent
+                        className="max-w-full p-0"
+                        style={{
+                          width: triggerWidth,
+                        }}
+                      >
+                        <Command>
+                          <CommandInput
+                            placeholder="Search tokens..."
+                            className="h-9"
+                          />
+                          <CommandEmpty>No token found.</CommandEmpty>
+                          <CommandGroup>
+                            {tokens.map((token) => (
+                              <CommandItem
+                                value={token.label}
+                                key={token.value}
+                                onSelect={() => {
+                                  form.setValue("paymentMethod", token.value);
+                                }}
+                              >
+                                {token.label}
+                                <CheckIcon
+                                  className={cn(
+                                    "ml-auto h-4 w-4",
+                                    token.value === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <InvoiceButton />
-          </CardFooter>
+          </CardContent>
         </form>
       </Form>
     </Card>

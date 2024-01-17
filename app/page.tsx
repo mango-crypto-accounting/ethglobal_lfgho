@@ -6,6 +6,7 @@ const Web3ConnectoSSR = dynamic(() => import("@/components/Web3Connect"), {
 
 const InvoiceCardSSR = dynamic(() => import("@/components/InvoiceCard"), {
   ssr: false,
+  loading: () => <p>Loading...</p>,
 });
 
 export default function Home() {

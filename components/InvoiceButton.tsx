@@ -11,7 +11,7 @@ export function InvoiceButton({}) {
   const { address } = useAccount();
 
   return address ? (
-    <Button className="w-full">
+    <Button className="w-full" type="submit">
       <CheckIcon className="mr-2 h-4 w-4" /> Pay
     </Button>
   ) : (
