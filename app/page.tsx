@@ -18,9 +18,24 @@ export default function Home() {
           <InvoiceCardSSR className="w-full" />
         </div>
       </div>
-      <div className="bg-gray-100 lg:h-screen p-6">
-        <div className="bg-white rounded-xl h-full">
-          <p>Invoice here</p>
+      <div className="bg-gray-100 lg:h-screen p-6 flex items-center justify-center">
+        <div className="bg-white rounded-xl w-full p-6 shadow-md">
+          <div>
+            <div className="space-y-4">
+              <div className="flex justify-between">
+                <p className="text-sm font-medium text-gray-500">Item 1</p>
+                <p className="text-sm font-bold text-gray-800">$2,000.00</p>
+              </div>
+              <div className="flex justify-between">
+                <p className="text-sm font-medium text-gray-500">Item 2</p>
+                <p className="text-sm font-bold text-gray-800">$3,000.00</p>
+              </div>
+              <div className="flex justify-between">
+                <p className="text-sm font-medium text-gray-500">Item 3</p>
+                <p className="text-sm font-bold text-gray-800">$3,800.00</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
