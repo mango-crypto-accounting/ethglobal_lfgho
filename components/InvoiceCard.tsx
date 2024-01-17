@@ -52,6 +52,7 @@ const FormSchema = z.object({
 
 export default function InvoiceCard({ className, ...props }: CardProps) {
   const { address } = useAccount();
+  const [open, setOpen] = useState(false);
   const [triggerWidth, setTriggerWidth] = useState(0);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -88,7 +89,7 @@ export default function InvoiceCard({ className, ...props }: CardProps) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col w-full mb-6">
                     <FormLabel>Payment method</FormLabel>
-                    <Popover>
+                    <Popover open={open} onOpenChange={setOpen}>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
@@ -131,6 +132,7 @@ export default function InvoiceCard({ className, ...props }: CardProps) {
                                 key={token.value}
                                 onSelect={() => {
                                   form.setValue("paymentMethod", token.value);
+                                  setOpen(false);
                                 }}
                               >
                                 {token.label}

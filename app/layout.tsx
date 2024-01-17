@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Web3Providers } from "@/components/providers/Web3Providers";
+import { Toaster } from "@/components/ui/toaster";
 
 import "./globals.css";
 
@@ -29,6 +30,7 @@ export default function RootLayout({
         )}
       >
         <Web3Providers>{children}</Web3Providers>
+        <Toaster />
       </body>
     </html>
   );

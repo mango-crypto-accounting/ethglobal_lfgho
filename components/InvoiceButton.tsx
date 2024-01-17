@@ -18,7 +18,14 @@ export function InvoiceButton({}) {
     <ConnectKitButton.Custom>
       {({ show }) => {
         return (
-          <Button className="w-full" onClick={show}>
+          <Button
+            type="button"
+            className="w-full"
+            onClick={(e) => {
+              e.preventDefault();
+              show?.();
+            }}
+          >
             Connect Wallet
           </Button>
         );
