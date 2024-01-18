@@ -35,6 +35,7 @@ import InvoiceDetails from "./InvoiceDetails";
 import { useAccount } from "wagmi";
 
 import { useState } from "react";
+import Web3Connect from "./Web3Connect";
 
 type CardProps = React.ComponentProps<typeof Card>;
 
@@ -69,97 +70,100 @@ export default function InvoiceCard({ className, ...props }: CardProps) {
     });
   }
   return (
-    <Card className={className} {...props}>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <CardHeader>
-            <CardTitle>
-              <div className="flex justify-between">
-                <span>Invoice #146</span>
-                <span>$5,000.00</span>
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid">
-            <InvoiceDetails />
-            {address && (
-              <FormField
-                control={form.control}
-                name="paymentMethod"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col w-full mb-6">
-                    <FormLabel>Payment method</FormLabel>
-                    <Popover open={open} onOpenChange={setOpen}>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            className={cn(
-                              "w-full justify-between",
-                              !field.value && "text-muted-foreground"
-                            )}
-                            ref={(node) => {
-                              if (node) setTriggerWidth(node.offsetWidth);
-                            }}
-                          >
-                            {field.value
-                              ? tokens.find(
-                                  (token) => token.value === field.value
-                                )?.label
-                              : "Select a token"}
-                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
+    <div className="flex flex-col gap-4 max-w-[500px] p-6 w-full">
+      <Web3Connect />
+      <Card className={className} {...props}>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <CardHeader>
+              <CardTitle>
+                <div className="flex justify-between">
+                  <span>Invoice #146</span>
+                  <span>$5,000.00</span>
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid">
+              <InvoiceDetails />
+              {address && (
+                <FormField
+                  control={form.control}
+                  name="paymentMethod"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col w-full mb-6">
+                      <FormLabel>Payment method</FormLabel>
+                      <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "w-full justify-between",
+                                !field.value && "text-muted-foreground"
+                              )}
+                              ref={(node) => {
+                                if (node) setTriggerWidth(node.offsetWidth);
+                              }}
+                            >
+                              {field.value
+                                ? tokens.find(
+                                    (token) => token.value === field.value
+                                  )?.label
+                                : "Select a token"}
+                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
 
-                      <PopoverContent
-                        className="max-w-full p-0"
-                        style={{
-                          width: triggerWidth,
-                        }}
-                      >
-                        <Command>
-                          <CommandInput
-                            placeholder="Search tokens..."
-                            className="h-9"
-                          />
-                          <CommandEmpty>No token found.</CommandEmpty>
-                          <CommandGroup>
-                            {tokens.map((token) => (
-                              <CommandItem
-                                value={token.label}
-                                key={token.value}
-                                onSelect={() => {
-                                  form.setValue("paymentMethod", token.value);
-                                  setOpen(false);
-                                }}
-                              >
-                                {token.label}
-                                <CheckIcon
-                                  className={cn(
-                                    "ml-auto h-4 w-4",
-                                    token.value === field.value
-                                      ? "opacity-100"
-                                      : "opacity-0"
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
+                        <PopoverContent
+                          className="max-w-full p-0"
+                          style={{
+                            width: triggerWidth,
+                          }}
+                        >
+                          <Command>
+                            <CommandInput
+                              placeholder="Search tokens..."
+                              className="h-9"
+                            />
+                            <CommandEmpty>No token found.</CommandEmpty>
+                            <CommandGroup>
+                              {tokens.map((token) => (
+                                <CommandItem
+                                  value={token.label}
+                                  key={token.value}
+                                  onSelect={() => {
+                                    form.setValue("paymentMethod", token.value);
+                                    setOpen(false);
+                                  }}
+                                >
+                                  {token.label}
+                                  <CheckIcon
+                                    className={cn(
+                                      "ml-auto h-4 w-4",
+                                      token.value === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-            <InvoiceButton />
-          </CardContent>
-        </form>
-      </Form>
-    </Card>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              <InvoiceButton />
+            </CardContent>
+          </form>
+        </Form>
+      </Card>
+    </div>
   );
 }
