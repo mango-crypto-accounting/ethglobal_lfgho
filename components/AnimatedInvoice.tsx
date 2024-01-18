@@ -10,17 +10,7 @@ const containerStateOne = {
 }
 
 const containerStateTwo = {
-  x: -500,
-}
-
-const invoiceStateOne = {
-  x: 150,
-  opacity: 0.5,
-}
-
-const invoiceStateTwo = {
-  x: 0,
-  opacity: 1,
+  x: -400,
 }
 
 export default function AnimatedInvoice() {
@@ -31,19 +21,14 @@ export default function AnimatedInvoice() {
     setIsFirstState(!isFirstState)
   }
   return (
-    <div className="overflow-y-hidden">
-      <motion.div
-        animate={isFirstState ? containerStateOne : containerStateTwo}
-        transition={{ type: 'tween', duration: 0.3 }}>
-        <div className="flex min-h-screen items-center justify-center">
-          <div>
-            <InvoiceCard
-              toggleState={toggleState}
-              isFirstState={isFirstState}
-            />
-          </div>
+    <motion.div
+      animate={isFirstState ? containerStateOne : containerStateTwo}
+      transition={{ type: 'tween', duration: 0.3 }}>
+      <div className="flex min-h-screen items-center justify-center">
+        <div>
+          <InvoiceCard toggleState={toggleState} isFirstState={isFirstState} />
         </div>
-      </motion.div>
-    </div>
+      </div>
+    </motion.div>
   )
 }

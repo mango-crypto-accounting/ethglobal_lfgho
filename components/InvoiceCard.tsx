@@ -186,7 +186,7 @@ export default function InvoiceCard({
           </Card>
         </div>
         <div className="absolute left-[100%] top-0 align-middle">
-          <div className="relative left-[450px]">
+          <div className="relative left-[40%]">
             <motion.div
               animate={isFirstState ? invoiceStateOne : invoiceStateTwo}
               transition={{ type: 'tween', duration: 0.3 }}
