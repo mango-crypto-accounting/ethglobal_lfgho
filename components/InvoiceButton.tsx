@@ -8,6 +8,7 @@ import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { Button } from '@/components/ui/button'
 import { useEthersSigner } from '@/hooks/useEthersSigner'
 import POOL_ABI from '@/lib/web3/erc20ABI.json'
+import WETH_GATEWAY_ABI from '@/lib/web3/erc20ABI.json'
 
 const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 const AAVE_V3_POOL_ADDRESS = '0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951'
@@ -23,6 +24,14 @@ export function InvoiceButton() {
 
   const depositAmount = ethers.utils.parseEther('0.01')
   const borrowAmount = ethers.utils.parseUnits('0.01', 'ether')
+
+  // Prepare contract for WETH gateway
+  const { config: wethGatewayConfig } = usePrepareContractWrite({
+    address: '0x7aE20397Ca327721F013BB6bC0dDf2D7dDd1cDbA',
+    abi: WETH_GATEWAY_ABI,
+    functionName: 'depositETH', // replace with actual function name
+    args: [address, 0],
+  })
 
   // Prepare contract write for deposit
   const { config: depositConfig } = usePrepareContractWrite({

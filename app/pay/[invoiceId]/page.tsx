@@ -1,9 +1,8 @@
-import Invoice from '@/components/Invoice'
+import Invoice, { TInvoice } from '@/components/Invoice'
 
 async function getData(invoiceId: string) {
-  console.log(invoiceId)
   const res = await fetch(
-    `https://us-central1-crypt-account-362116.cloudfunctions.net/invoice-generator/${invoiceId}`,
+    `https://us-central1-crypt-account-362116.cloudfunctions.net/invoice-generator/invoices/${invoiceId}`,
   )
 
   if (!res.ok) {
@@ -20,11 +19,11 @@ export default async function PayInvoicePage({
   params: { invoiceId: string }
 }) {
   const { invoiceId } = params
-  const data = await getData(invoiceId)
-  console.log(data)
+  const data = (await getData(invoiceId)) as TInvoice
+
   return (
     <div className="h-full">
-      <Invoice />
+      <Invoice invoice={data} />
     </div>
   )
 }
