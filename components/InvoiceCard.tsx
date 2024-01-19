@@ -49,8 +49,8 @@ const invoiceStateTwo = {
 }
 
 type CardProps = React.ComponentProps<typeof Card> & {
-  toggleState: () => void
-  isFirstState: boolean
+  toggleState?: () => void
+  isFirstState?: boolean
 }
 
 const tokens = [

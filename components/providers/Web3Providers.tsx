@@ -1,7 +1,7 @@
 'use client'
 
 import { ConnectKitProvider, getDefaultConfig } from 'connectkit'
-import { WagmiConfig, createConfig, mainnet, sepolia } from 'wagmi'
+import { WagmiConfig, createConfig, sepolia } from 'wagmi'
 import { env } from '@/env.mjs'
 
 const config = createConfig(
@@ -12,7 +12,7 @@ const config = createConfig(
 
     // Required
     appName: env.NEXT_PUBLIC_WALLET_CONNECT_APP_NAME,
-    chains: [mainnet, sepolia],
+    chains: [sepolia],
 
     // Optional
     // appDescription: "Your App Description",

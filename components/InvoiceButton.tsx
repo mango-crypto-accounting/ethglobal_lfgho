@@ -1,25 +1,58 @@
 'use client'
 
 import React, { useState } from 'react'
-import { InterestRate, Pool } from '@aave/contract-helpers'
 import { ConnectKitButton } from 'connectkit'
 import { ethers } from 'ethers'
 import { CheckIcon } from 'lucide-react'
-import { useAccount } from 'wagmi'
+import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { Button } from '@/components/ui/button'
-import { useEthersProvider } from '@/hooks/useEthersProvider'
 import { useEthersSigner } from '@/hooks/useEthersSigner'
+import POOL_ABI from '@/lib/web3/erc20ABI.json'
 
-const AAVE_V3_POOL_ADDRESS = '0x012bAC54348C0E635dCAc9D5FB99f06F24136C9A'
+const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+const AAVE_V3_POOL_ADDRESS = '0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951'
 const GHO_TOKEN_ADDRESS = '0xc4bF5CbDaBE595361438F8c6a187bDc330539c60'
 
 export function InvoiceButton() {
   const { address } = useAccount()
 
-  const provider = useEthersProvider()
+  // const provider = useEthersProvider()
   const signer = useEthersSigner()
 
   const [status, setStatus] = useState('')
+
+  const depositAmount = ethers.utils.parseEther('0.01')
+  const borrowAmount = ethers.utils.parseUnits('0.01', 'ether')
+
+  // Prepare contract write for deposit
+  const { config: depositConfig } = usePrepareContractWrite({
+    address: AAVE_V3_POOL_ADDRESS,
+    abi: POOL_ABI,
+    functionName: 'deposit', // replace with actual function name
+    args: [ETH_ADDRESS, depositAmount, address, 0],
+  })
+
+  // Prepare contract write for borrow
+  const { config: borrowConfig } = usePrepareContractWrite({
+    address: AAVE_V3_POOL_ADDRESS,
+    abi: POOL_ABI,
+    functionName: 'borrow', // replace with actual function name
+    args: [GHO_TOKEN_ADDRESS, borrowAmount, 1, 0, address],
+  })
+
+  const {
+    write: depositWrite,
+    data: depositData,
+    isLoading: isDepositLoading,
+    isSuccess: isDepositSuccess,
+  } = useContractWrite(depositConfig)
+
+  const {
+    write: borrowWrite,
+    data: borrowData,
+    isLoading: isBorrowLoading,
+    isSuccess: isBorrowSuccess,
+  } = useContractWrite(borrowConfig)
 
   const depositETHAndBorrowGHO = async () => {
     if (!address) {
@@ -33,32 +66,14 @@ export function InvoiceButton() {
     }
 
     try {
-      const depositAmount = ethers.utils.parseEther('0.01')
+      // Create an instance of the Pool contract
+
       setStatus('Depositing ETH...')
-      await signer.sendTransaction({
-        to: AAVE_V3_POOL_ADDRESS,
-        value: depositAmount.toBigInt(),
-        gasLimit: ethers.utils.hexlify(1000000),
-      })
+      await depositWrite?.()
 
-      // Initialize the Aave Pool with the connected signer
-      const pool = new Pool(provider, { POOL: AAVE_V3_POOL_ADDRESS })
-
-      const borrowAmount = ethers.utils.parseUnits('0.01', 'ether')
       setStatus('Borrowing GHO...')
 
-      const txs = await pool.borrow({
-        user: address,
-        reserve: GHO_TOKEN_ADDRESS,
-        amount: borrowAmount.toString(),
-        interestRateMode: InterestRate.Variable,
-      })
-
-      // Wait for the transaction to be mined
-      txs.map(async (tx) => {
-        const awaitedTx = await tx.tx()
-        console.log(awaitedTx)
-      })
+      await borrowWrite?.()
 
       setStatus('Transaction successful!')
     } catch (error) {
