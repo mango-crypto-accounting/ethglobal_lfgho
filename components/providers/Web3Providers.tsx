@@ -1,8 +1,8 @@
-"use client";
+'use client'
 
-import { WagmiConfig, createConfig } from "wagmi";
-import { ConnectKitProvider, getDefaultConfig } from "connectkit";
-import { env } from "@/env.mjs";
+import { ConnectKitProvider, getDefaultConfig } from 'connectkit'
+import { WagmiConfig, createConfig, mainnet, sepolia } from 'wagmi'
+import { env } from '@/env.mjs'
 
 const config = createConfig(
   getDefaultConfig({
@@ -12,18 +12,18 @@ const config = createConfig(
 
     // Required
     appName: env.NEXT_PUBLIC_WALLET_CONNECT_APP_NAME,
+    chains: [mainnet, sepolia],
 
     // Optional
     // appDescription: "Your App Description",
     // appUrl: "https://family.co", // your app's url
     // appIcon: "https://family.co/logo.png", // your app's icon, no bigger than 1024x1024px (max. 1MB)
-  })
-);
-
+  }),
+)
 export const Web3Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <WagmiConfig config={config}>
       <ConnectKitProvider>{children}</ConnectKitProvider>
     </WagmiConfig>
-  );
-};
+  )
+}

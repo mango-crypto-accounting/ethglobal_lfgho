@@ -1,8 +1,10 @@
 'use client'
 
 import React, { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
 import InvoiceCard from './InvoiceCard'
+import InvoicePDF from './InvoicePDF'
 
 // Define the two different states for animation
 const containerStateOne = {
@@ -21,14 +23,17 @@ export default function AnimatedInvoice() {
     setIsFirstState(!isFirstState)
   }
   return (
-    <motion.div
-      animate={isFirstState ? containerStateOne : containerStateTwo}
-      transition={{ type: 'tween', duration: 0.3 }}>
-      <div className="flex min-h-screen items-center justify-center">
-        <div>
-          <InvoiceCard toggleState={toggleState} isFirstState={isFirstState} />
-        </div>
+    <div className="flex min-h-screen flex-col items-center justify-center gap-14 lg:flex-row">
+      <div className="flex w-full grow items-center justify-end p-6">
+        <InvoiceCard
+          toggleState={toggleState}
+          isFirstState={isFirstState}
+          className="w-full grow lg:max-w-[400px]"
+        />
       </div>
-    </motion.div>
+      <div className="h-fit w-full grow items-center justify-start p-6">
+        <InvoicePDF />
+      </div>
+    </div>
   )
 }

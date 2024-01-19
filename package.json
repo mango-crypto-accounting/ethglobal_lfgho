@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aave/contract-helpers": "^1.21.1",
+    "@aave/math-utils": "^1.21.1",
     "@hookform/resolvers": "^3.3.4",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-icons": "^1.3.0",
@@ -16,13 +18,17 @@
     "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-toast": "^1.1.5",
+    "@react-pdf-viewer/core": "^3.12.0",
+    "@react-pdf-viewer/default-layout": "^3.12.0",
     "@t3-oss/env-nextjs": "^0.7.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^0.2.0",
     "connectkit": "^1.6.0",
+    "ethers": "^5.x",
     "lucide-react": "^0.310.0",
     "next": "14.0.4",
+    "pdfjs-dist": "^3.8.162",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.49.3",
@@ -41,9 +47,10 @@
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
     "eslint-config-prettier": "^9.0.0",
+    "postcss": "^8",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.7",
-    "postcss": "^8",
+    "raw-loader": "^4.0.2",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
   }
