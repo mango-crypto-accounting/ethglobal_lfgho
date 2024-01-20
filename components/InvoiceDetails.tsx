@@ -1,34 +1,45 @@
-import React from "react";
+import React from 'react'
+import { TInvoice } from './Invoice'
 
-export default function InvoiceDetails() {
+export default function InvoiceDetails({ invoice }: { invoice: TInvoice }) {
   return (
-    <div className="border-b pb-8 mb-6">
+    <div className="mb-6 border-b pb-8">
       <div className="grid grid-cols-2 gap-4">
         <div>
           <p className="text-sm font-medium text-gray-500">To</p>
         </div>
         <div className="text-right">
-          <p className="text-sm font-bold text-gray-800">Dynamic Labs, Inc.</p>
+          <p className="text-sm font-bold text-gray-800">
+            {invoice.client.name}
+          </p>
         </div>
         <div>
           <p className="text-sm font-medium text-gray-500">From</p>
         </div>
         <div className="text-right">
-          <p className="text-sm font-bold text-gray-800">Maple Finance</p>
+          <p className="text-sm font-bold text-gray-800">
+            {invoice.issuer.name}
+          </p>
         </div>
         <div>
           <p className="text-sm font-medium text-gray-500">Amount due</p>
         </div>
         <div className="text-right">
-          <p className="text-sm font-bold text-gray-800">$5,000.00</p>
+          <p className="text-sm font-bold text-gray-800">
+            {invoice.crypto.chain} {invoice.total}
+          </p>
         </div>
         <div>
           <p className="text-sm font-medium text-gray-500">Due on</p>
         </div>
         <div className="text-right">
-          <p className="text-sm font-bold text-gray-800">Sep 1, 2023</p>
+          <p
+            className="text-sm font-bold text-gray-800"
+            suppressHydrationWarning>
+            {new Date(invoice.dueDate).toLocaleDateString()}
+          </p>
         </div>
       </div>
     </div>
-  );
+  )
 }

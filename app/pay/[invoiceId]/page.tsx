@@ -20,7 +20,6 @@ export default async function PayInvoicePage({
 }) {
   const { invoiceId } = params
   const data = (await getData(invoiceId)) as TInvoice
-  console.log(data)
   return (
     <div className="h-full">
       <Invoice invoice={data} />

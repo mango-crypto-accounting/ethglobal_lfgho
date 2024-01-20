@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { ConnectKitButton } from 'connectkit'
 import { ethers } from 'ethers'
-import { CheckIcon } from 'lucide-react'
+import { CheckIcon, ClockIcon } from 'lucide-react'
 import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { Button } from '@/components/ui/button'
 import { useEthersSigner } from '@/hooks/useEthersSigner'
@@ -11,9 +11,9 @@ import POOL_ABI from '@/lib/web3/erc20ABI.json'
 import WETH_GATEWAY_ABI from '@/lib/web3/wethGatewayABI.json'
 
 const WETH_GATEWAWY_ADDRESS = '0x387d311e47e80b498169e6fb51d3193167d89F7D'
-const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 const AAVE_V3_POOL_ADDRESS = '0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951'
 const GHO_TOKEN_ADDRESS = '0xc4bF5CbDaBE595361438F8c6a187bDc330539c60'
+const WETH_TOKEN_ADDRESS = '0xC558DBdd856501FCd9aaF1E62eae57A9F0629a3c'
 
 export function InvoiceButton() {
   const { address } = useAccount()
@@ -34,12 +34,20 @@ export function InvoiceButton() {
     args: [AAVE_V3_POOL_ADDRESS, address, depositAmount.toBigInt()],
   })
 
+  // Transfer GHO to address
+  const { config: transferConfig } = usePrepareContractWrite({
+    address: GHO_TOKEN_ADDRESS,
+    abi: POOL_ABI,
+    functionName: 'transfer',
+    args: [address, borrowAmount.toBigInt()],
+  })
+
   // Prepare contract write for deposit
   const { config: depositConfig } = usePrepareContractWrite({
     address: AAVE_V3_POOL_ADDRESS,
     abi: POOL_ABI,
     functionName: 'deposit', // replace with actual function name
-    args: [ETH_ADDRESS, depositAmount, address, 0],
+    args: [WETH_TOKEN_ADDRESS, depositAmount, address, 0],
   })
 
   // Prepare contract write for borrow
@@ -66,6 +74,8 @@ export function InvoiceButton() {
 
   const { write: wethGatewayWrite } = useContractWrite(wethGatewayConfig)
 
+  const { write: transferWrite } = useContractWrite(transferConfig)
+
   const depositETHAndBorrowGHO = async () => {
     if (!address) {
       setStatus('Please connect your wallet.')
@@ -80,7 +90,7 @@ export function InvoiceButton() {
     try {
       // Create an instance of the Pool contract
       setStatus('Swapping ETH for wETH...')
-      await wethGatewayWrite?.()
+      // await wethGatewayWrite?.()
 
       // setStatus('Depositing ETH...')
       // await depositWrite?.()
@@ -96,17 +106,50 @@ export function InvoiceButton() {
     }
   }
 
+  const payNow = async () => {
+    if (!address) {
+      setStatus('Please connect your wallet.')
+      return
+    }
+
+    if (!signer) {
+      setStatus('Please connect your wallet.')
+      return
+    }
+
+    try {
+      // get GHO balance
+      const ghoBalance = await signer?.getBalance()
+
+      setStatus('Transaction successful!')
+    } catch (error) {
+      console.error(error)
+      setStatus('An error occurred.')
+    }
+  }
+
   return address ? (
     <>
-      <Button
-        className="w-full"
-        type="submit"
-        onClick={() => {
-          depositETHAndBorrowGHO()
-        }}>
-        <CheckIcon className="mr-2 h-4 w-4" /> Pay
-      </Button>
-      {status && <p className="text-sm text-gray-500">{status}</p>}
+      <div className="flex gap-4">
+        <Button
+          className="w-full"
+          variant="outline"
+          type="submit"
+          onClick={() => {
+            depositETHAndBorrowGHO()
+          }}>
+          <ClockIcon className="mr-2 h-4 w-4" /> Borrow & Pay
+        </Button>
+        <Button
+          className="w-full"
+          type="submit"
+          onClick={() => {
+            payNow()
+          }}>
+          <CheckIcon className="mr-2 h-4 w-4" /> Pay now
+        </Button>
+      </div>
+      {status && <p className="mt-4 text-sm text-gray-500">{status}</p>}
     </>
   ) : (
     <ConnectKitButton.Custom>

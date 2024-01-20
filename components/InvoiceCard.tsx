@@ -1,10 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import dynamic from 'next/dynamic'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
-import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 import * as z from 'zod'
@@ -32,31 +30,48 @@ import {
 } from '@/components/ui/popover'
 import { toast } from '@/components/ui/use-toast'
 import { cn } from '@/lib/utils'
+import { TInvoice } from './Invoice'
 import { InvoiceButton } from './InvoiceButton'
 import InvoiceDetails from './InvoiceDetails'
 import Web3Connect from './Web3Connect'
 
-const PdfViewer = dynamic(() => import('./InvoicePDF'), { ssr: false })
-
-const invoiceStateOne = {
-  x: 0,
-  opacity: 0.5,
-}
-
-const invoiceStateTwo = {
-  x: -150,
-  opacity: 1,
-}
-
 type CardProps = React.ComponentProps<typeof Card> & {
   toggleState?: () => void
   isFirstState?: boolean
+  invoice: TInvoice
 }
 
 const tokens = [
-  { label: 'USDC', value: 'usdc' },
-  { label: 'GHO', value: 'gho' },
-  { label: 'ETH', value: 'eth' },
+  {
+    value: 'ETH',
+    label: 'Ethereum',
+    logo: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png?1696501628',
+  },
+  {
+    value: 'USDT',
+    label: 'Tether',
+    logo: 'https://assets.coingecko.com/coins/images/325/small/Tether.png?1696501661',
+  },
+  {
+    value: 'BNB',
+    label: 'BNB',
+    logo: 'https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png?1696501970',
+  },
+  {
+    value: 'USDC',
+    label: 'USD Coin',
+    logo: 'https://assets.coingecko.com/coins/images/6319/small/usdc.png?1696506694',
+  },
+  {
+    value: 'STETH',
+    label: 'Lido Staked Ether',
+    logo: 'https://assets.coingecko.com/coins/images/13442/small/steth_logo.png?1696513206',
+  },
+  {
+    value: 'GHO',
+    label: 'GHO',
+    logo: 'https://assets.coingecko.com/coins/images/30663/small/ghoaave.jpeg?1696529533',
+  },
 ] as const
 
 const FormSchema = z.object({
@@ -65,10 +80,22 @@ const FormSchema = z.object({
   }),
 })
 
+function formatToLocalCurrency(
+  amount: number,
+  locale: string,
+  currency: string,
+): string {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(amount)
+}
+
 export default function InvoiceCard({
   className,
   toggleState,
   isFirstState,
+  invoice,
   ...props
 }: CardProps) {
   const { address } = useAccount()
@@ -98,17 +125,20 @@ export default function InvoiceCard({
             <CardHeader>
               <CardTitle>
                 <div className="flex justify-between">
-                  <span>Invoice #146</span>
-                  <span>$5,000.00</span>
+                  <span>Invoice #{invoice.number}</span>
+                  <span>
+                    {formatToLocalCurrency(invoice.total, 'en-US', 'USD')}
+                  </span>
                 </div>
               </CardTitle>
             </CardHeader>
             <CardContent className="grid">
-              <InvoiceDetails />
+              <InvoiceDetails invoice={invoice} />
               {address && (
                 <FormField
                   control={form.control}
                   name="paymentMethod"
+                  defaultValue="GHO"
                   render={({ field }) => (
                     <FormItem className="mb-6 flex w-full flex-col">
                       <FormLabel>Payment method</FormLabel>
@@ -125,11 +155,22 @@ export default function InvoiceCard({
                               ref={(node) => {
                                 if (node) setTriggerWidth(node.offsetWidth)
                               }}>
-                              {field.value
-                                ? tokens.find(
-                                    (token) => token.value === field.value,
-                                  )?.label
-                                : 'Select a token'}
+                              <div className="flex items-center gap-2">
+                                <img
+                                  alt={field.value}
+                                  src={
+                                    tokens.find(
+                                      (token) => token.value === field.value,
+                                    )?.logo
+                                  }
+                                  className="h-5 w-5 rounded-full"
+                                />
+                                {field.value
+                                  ? tokens.find(
+                                      (token) => token.value === field.value,
+                                    )?.label
+                                  : 'Select a token'}
+                              </div>
                               <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                           </FormControl>
@@ -155,7 +196,14 @@ export default function InvoiceCard({
                                     form.setValue('paymentMethod', token.value)
                                     setOpen(false)
                                   }}>
-                                  {token.label}
+                                  <div className="flex items-center gap-2">
+                                    <img
+                                      alt={token.label}
+                                      src={token.logo}
+                                      className="h-5 w-5 rounded-full"
+                                    />
+                                    {token.label}
+                                  </div>
                                   <CheckIcon
                                     className={cn(
                                       'ml-auto h-4 w-4',

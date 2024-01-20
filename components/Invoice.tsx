@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
+import dynamic from 'next/dynamic'
 import InvoiceCard from './InvoiceCard'
-import InvoicePDF from './InvoicePDF'
+
+const PdfViewer = dynamic(() => import('./InvoicePDF'), { ssr: false })
 
 type Address = {
   email: string
@@ -66,10 +68,10 @@ export default function Invoice({ invoice }: InvoicePageProps) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-14 lg:flex-row">
       <div className="flex w-full grow items-center justify-end p-6">
-        <InvoiceCard className="w-full grow lg:max-w-[400px]" />
+        <InvoiceCard className="w-full grow lg:w-[400px]" invoice={invoice} />
       </div>
       <div className="h-fit w-full grow items-center justify-start p-6">
-        <InvoicePDF pdfUrl={invoice.invoiceLink} />
+        <PdfViewer pdfUrl={invoice.invoiceLink} />
       </div>
     </div>
   )
