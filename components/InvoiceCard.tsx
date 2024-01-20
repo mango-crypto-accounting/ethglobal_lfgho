@@ -125,10 +125,8 @@ export default function InvoiceCard({
             <CardHeader>
               <CardTitle>
                 <div className="flex justify-between">
-                  <span>Invoice #{invoice.number}</span>
-                  <span>
-                    {formatToLocalCurrency(invoice.total, 'en-US', 'USD')}
-                  </span>
+                  Invoice #{invoice.number} for{' '}
+                  {formatToLocalCurrency(invoice.total, 'en-US', 'USD')}
                 </div>
               </CardTitle>
             </CardHeader>

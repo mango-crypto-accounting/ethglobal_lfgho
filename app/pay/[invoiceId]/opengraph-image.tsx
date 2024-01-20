@@ -47,7 +47,15 @@ export default async function Image({
           src={imageData}
           style={{ width: '100%', height: '100%', position: 'absolute' }}
         />
-        <div>{invoice.issuer.name} sent you an invoice</div>
+        <div
+          style={{
+            display: 'flex',
+            color: '#2C478C',
+            flexDirection: 'column',
+          }}>
+          <span style={{ fontWeight: 800 }}>{invoice.issuer.name}</span>
+          <span>has sent you an invoice</span>
+        </div>
       </div>
     ),
     {

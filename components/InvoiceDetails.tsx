@@ -8,7 +8,7 @@ export default function InvoiceDetails({ invoice }: { invoice: TInvoice }) {
         <div>
           <p className="text-sm font-medium text-gray-500">To</p>
         </div>
-        <div className="text-right">
+        <div className="">
           <p className="text-sm font-bold text-gray-800">
             {invoice.client.name}
           </p>
@@ -16,7 +16,7 @@ export default function InvoiceDetails({ invoice }: { invoice: TInvoice }) {
         <div>
           <p className="text-sm font-medium text-gray-500">From</p>
         </div>
-        <div className="text-right">
+        <div className="">
           <p className="text-sm font-bold text-gray-800">
             {invoice.issuer.name}
           </p>
@@ -24,7 +24,7 @@ export default function InvoiceDetails({ invoice }: { invoice: TInvoice }) {
         <div>
           <p className="text-sm font-medium text-gray-500">Amount due</p>
         </div>
-        <div className="text-right">
+        <div className="">
           <p className="text-sm font-bold text-gray-800">
             {invoice.crypto.chain} {invoice.total}
           </p>
@@ -32,7 +32,7 @@ export default function InvoiceDetails({ invoice }: { invoice: TInvoice }) {
         <div>
           <p className="text-sm font-medium text-gray-500">Due on</p>
         </div>
-        <div className="text-right">
+        <div className="">
           <p
             className="text-sm font-bold text-gray-800"
             suppressHydrationWarning>

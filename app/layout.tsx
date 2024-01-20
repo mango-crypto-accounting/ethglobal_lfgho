@@ -12,7 +12,7 @@ const fontSans = FontSans({
 
 export const metadata: Metadata = {
   title: 'Acctual LFGHO',
-  description: 'Lets fucking goooo',
+  description: 'Invoice & pay in GHO',
 }
 
 export default function RootLayout({

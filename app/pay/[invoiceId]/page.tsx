@@ -1,3 +1,4 @@
+import { Metadata } from 'next'
 import Invoice, { TInvoice } from '@/components/Invoice'
 
 async function getData(invoiceId: string) {
@@ -11,6 +12,24 @@ async function getData(invoiceId: string) {
   }
 
   return res.json()
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { invoiceId: string }
+}): Promise<Metadata> {
+  const { invoiceId } = params
+
+  // fetch data
+  const res = await fetch(
+    `https://us-central1-crypt-account-362116.cloudfunctions.net/invoice-generator/invoices/${invoiceId}`,
+  )
+  const invoice = (await res.json()) as TInvoice
+
+  return {
+    title: `${invoice.issuer.name} has sent you an invoice`,
+  }
 }
 
 export default async function PayInvoicePage({
