@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { ConnectKitButton } from 'connectkit'
 import { ethers } from 'ethers'
-import { CheckIcon, ClockIcon } from 'lucide-react'
+import { BanknoteIcon, CheckIcon, ClockIcon } from 'lucide-react'
 import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { Button } from '@/components/ui/button'
 import { useEthersSigner } from '@/hooks/useEthersSigner'
@@ -30,51 +30,49 @@ export function InvoiceButton() {
   const { config: wethGatewayConfig } = usePrepareContractWrite({
     address: WETH_GATEWAWY_ADDRESS,
     abi: WETH_GATEWAY_ABI,
+    value: depositAmount.toBigInt(),
     functionName: 'depositETH',
-    args: [AAVE_V3_POOL_ADDRESS, address, depositAmount.toBigInt()],
+    args: [AAVE_V3_POOL_ADDRESS, address, 0],
   })
 
-  // Transfer GHO to address
-  const { config: transferConfig } = usePrepareContractWrite({
-    address: GHO_TOKEN_ADDRESS,
-    abi: POOL_ABI,
-    functionName: 'transfer',
-    args: [address, borrowAmount.toBigInt()],
-  })
+  // // Prepare contract write for deposit
+  // const { config: depositConfig } = usePrepareContractWrite({
+  //   address: AAVE_V3_POOL_ADDRESS,
+  //   abi: POOL_ABI,
+  //   functionName: 'deposit', // replace with actual function name
+  //   args: [WETH_TOKEN_ADDRESS, depositAmount, address, 0],
+  // })
 
-  // Prepare contract write for deposit
-  const { config: depositConfig } = usePrepareContractWrite({
-    address: AAVE_V3_POOL_ADDRESS,
-    abi: POOL_ABI,
-    functionName: 'deposit', // replace with actual function name
-    args: [WETH_TOKEN_ADDRESS, depositAmount, address, 0],
-  })
+  // // Prepare contract write for borrow
+  // const { config: borrowConfig } = usePrepareContractWrite({
+  //   address: AAVE_V3_POOL_ADDRESS,
+  //   abi: POOL_ABI,
+  //   functionName: 'borrow', // replace with actual function name
+  //   args: [GHO_TOKEN_ADDRESS, borrowAmount, 1, 0, address],
+  // })
 
-  // Prepare contract write for borrow
-  const { config: borrowConfig } = usePrepareContractWrite({
-    address: AAVE_V3_POOL_ADDRESS,
-    abi: POOL_ABI,
-    functionName: 'borrow', // replace with actual function name
-    args: [GHO_TOKEN_ADDRESS, borrowAmount, 1, 0, address],
-  })
+  // const {
+  //   write: depositWrite,
+  //   data: depositData,
+  //   isLoading: isDepositLoading,
+  //   isSuccess: isDepositSuccess,
+  // } = useContractWrite(depositConfig)
+
+  // const {
+  //   write: borrowWrite,
+  //   data: borrowData,
+  //   isLoading: isBorrowLoading,
+  //   isSuccess: isBorrowSuccess,
+  // } = useContractWrite(borrowConfig)
 
   const {
-    write: depositWrite,
-    data: depositData,
-    isLoading: isDepositLoading,
-    isSuccess: isDepositSuccess,
-  } = useContractWrite(depositConfig)
+    write: wethGatewayWrite,
+    isError: isSupplyError,
+    isLoading: isSupplyLoading,
+    isSuccess: isSupplySuccesss,
+  } = useContractWrite(wethGatewayConfig)
 
-  const {
-    write: borrowWrite,
-    data: borrowData,
-    isLoading: isBorrowLoading,
-    isSuccess: isBorrowSuccess,
-  } = useContractWrite(borrowConfig)
-
-  const { write: wethGatewayWrite } = useContractWrite(wethGatewayConfig)
-
-  const { write: transferWrite } = useContractWrite(transferConfig)
+  // const { write: transferWrite } = useContractWrite(transferConfig)
 
   const depositETHAndBorrowGHO = async () => {
     if (!address) {
@@ -130,6 +128,26 @@ export function InvoiceButton() {
 
   return address ? (
     <>
+      <Button
+        className="mb-4 w-full"
+        variant={isSupplySuccesss ? 'secondary' : 'default'}
+        disabled={isSupplyLoading || isSupplySuccesss}
+        onClick={() => {
+          wethGatewayWrite?.()
+        }}>
+        {isSupplySuccesss ? (
+          <CheckIcon className="mr-2 h-4 w-4" />
+        ) : (
+          <BanknoteIcon className="mr-2 h-4 w-4" />
+        )}
+        {isSupplyLoading
+          ? 'Supplying...'
+          : isSupplySuccesss
+            ? 'Supplied!'
+            : isSupplyError
+              ? 'Supply failed'
+              : 'Supply'}
+      </Button>
       <div className="flex gap-4">
         <Button
           className="w-full"
