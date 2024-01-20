@@ -1,6 +1,8 @@
 import { Metadata } from 'next'
 import Invoice, { TInvoice } from '@/components/Invoice'
 
+export const revalidate = 1800 // revalidate at most every half hour
+
 async function getData(invoiceId: string) {
   const res = await fetch(
     `https://us-central1-crypt-account-362116.cloudfunctions.net/invoice-generator/invoices/${invoiceId}`,

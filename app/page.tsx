@@ -1,5 +1,7 @@
 import dynamic from 'next/dynamic'
 
+export const revalidate = 1800 // revalidate at most every half hour
+
 const AnimatedInvoiceSSR = dynamic(
   () => import('@/components/AnimatedInvoice'),
   {

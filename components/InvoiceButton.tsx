@@ -36,12 +36,12 @@ export function InvoiceButton() {
   })
 
   // // Prepare contract write for deposit
-  // const { config: depositConfig } = usePrepareContractWrite({
-  //   address: AAVE_V3_POOL_ADDRESS,
-  //   abi: POOL_ABI,
-  //   functionName: 'deposit', // replace with actual function name
-  //   args: [WETH_TOKEN_ADDRESS, depositAmount, address, 0],
-  // })
+  const { config: depositConfig } = usePrepareContractWrite({
+    address: AAVE_V3_POOL_ADDRESS,
+    abi: POOL_ABI,
+    functionName: 'deposit', // replace with actual function name
+    args: [WETH_TOKEN_ADDRESS, depositAmount.toBigInt(), address, 0],
+  })
 
   // // Prepare contract write for borrow
   // const { config: borrowConfig } = usePrepareContractWrite({

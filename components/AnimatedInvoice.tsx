@@ -13,7 +13,7 @@ export default function AnimatedInvoice() {
   }
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-14 lg:flex-row">
-      <div className="flex w-full grow items-center justify-end p-6">
+      <div className="flex w-full grow items-center justify-center p-6">
         <InvoiceCard
           toggleState={toggleState}
           isFirstState={isFirstState}
@@ -81,9 +81,6 @@ export default function AnimatedInvoice() {
             invoiceLink: 'https://cryptkit.com/invoices/123',
           }}
         />
-      </div>
-      <div className="h-fit w-full grow items-center justify-start p-6">
-        <InvoicePDF />
       </div>
     </div>
   )
