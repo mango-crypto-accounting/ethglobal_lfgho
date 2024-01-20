@@ -8,8 +8,9 @@ import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { Button } from '@/components/ui/button'
 import { useEthersSigner } from '@/hooks/useEthersSigner'
 import POOL_ABI from '@/lib/web3/erc20ABI.json'
-import WETH_GATEWAY_ABI from '@/lib/web3/erc20ABI.json'
+import WETH_GATEWAY_ABI from '@/lib/web3/wethGatewayABI.json'
 
+const WETH_GATEWAWY_ADDRESS = '0x387d311e47e80b498169e6fb51d3193167d89F7D'
 const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 const AAVE_V3_POOL_ADDRESS = '0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951'
 const GHO_TOKEN_ADDRESS = '0xc4bF5CbDaBE595361438F8c6a187bDc330539c60'
@@ -27,10 +28,10 @@ export function InvoiceButton() {
 
   // Prepare contract for WETH gateway
   const { config: wethGatewayConfig } = usePrepareContractWrite({
-    address: '0x7aE20397Ca327721F013BB6bC0dDf2D7dDd1cDbA',
+    address: WETH_GATEWAWY_ADDRESS,
     abi: WETH_GATEWAY_ABI,
-    functionName: 'depositETH', // replace with actual function name
-    args: [address, 0],
+    functionName: 'depositETH',
+    args: [AAVE_V3_POOL_ADDRESS, address, depositAmount.toBigInt()],
   })
 
   // Prepare contract write for deposit
@@ -63,6 +64,8 @@ export function InvoiceButton() {
     isSuccess: isBorrowSuccess,
   } = useContractWrite(borrowConfig)
 
+  const { write: wethGatewayWrite } = useContractWrite(wethGatewayConfig)
+
   const depositETHAndBorrowGHO = async () => {
     if (!address) {
       setStatus('Please connect your wallet.')
@@ -76,13 +79,15 @@ export function InvoiceButton() {
 
     try {
       // Create an instance of the Pool contract
+      setStatus('Swapping ETH for wETH...')
+      await wethGatewayWrite?.()
 
-      setStatus('Depositing ETH...')
-      await depositWrite?.()
+      // setStatus('Depositing ETH...')
+      // await depositWrite?.()
 
-      setStatus('Borrowing GHO...')
+      // setStatus('Borrowing GHO...')
 
-      await borrowWrite?.()
+      // await borrowWrite?.()
 
       setStatus('Transaction successful!')
     } catch (error) {
