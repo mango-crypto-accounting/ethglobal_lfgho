@@ -13,18 +13,12 @@ import WETH_GATEWAY_ABI from '@/lib/web3/wethGatewayABI.json'
 const WETH_GATEWAWY_ADDRESS = '0x387d311e47e80b498169e6fb51d3193167d89F7D'
 const AAVE_V3_POOL_ADDRESS = '0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951'
 const GHO_TOKEN_ADDRESS = '0xc4bF5CbDaBE595361438F8c6a187bDc330539c60'
-const WETH_TOKEN_ADDRESS = '0xC558DBdd856501FCd9aaF1E62eae57A9F0629a3c'
 
 export function InvoiceButton() {
   const { address } = useAccount()
 
-  // const provider = useEthersProvider()
-  const signer = useEthersSigner()
-
-  const [status, setStatus] = useState('')
-
   const depositAmount = ethers.utils.parseEther('0.01')
-  const borrowAmount = ethers.utils.parseUnits('0.01', 'ether')
+  const borrowAmount = ethers.utils.parseUnits(String(0.01 * 0.6), 'ether') // 60% of 0.01 ETH
 
   // Prepare contract for WETH gateway
   const { config: wethGatewayConfig } = usePrepareContractWrite({
@@ -35,96 +29,28 @@ export function InvoiceButton() {
     args: [AAVE_V3_POOL_ADDRESS, address, 0],
   })
 
-  // // Prepare contract write for deposit
-  const { config: depositConfig } = usePrepareContractWrite({
-    address: AAVE_V3_POOL_ADDRESS,
-    abi: POOL_ABI,
-    functionName: 'deposit', // replace with actual function name
-    args: [WETH_TOKEN_ADDRESS, depositAmount.toBigInt(), address, 0],
-  })
-
-  // // Prepare contract write for borrow
-  // const { config: borrowConfig } = usePrepareContractWrite({
-  //   address: AAVE_V3_POOL_ADDRESS,
-  //   abi: POOL_ABI,
-  //   functionName: 'borrow', // replace with actual function name
-  //   args: [GHO_TOKEN_ADDRESS, borrowAmount, 1, 0, address],
-  // })
-
-  // const {
-  //   write: depositWrite,
-  //   data: depositData,
-  //   isLoading: isDepositLoading,
-  //   isSuccess: isDepositSuccess,
-  // } = useContractWrite(depositConfig)
-
-  // const {
-  //   write: borrowWrite,
-  //   data: borrowData,
-  //   isLoading: isBorrowLoading,
-  //   isSuccess: isBorrowSuccess,
-  // } = useContractWrite(borrowConfig)
-
   const {
     write: wethGatewayWrite,
+    data: wethGatewayData,
     isError: isDepositError,
     isLoading: isDepositLoading,
     isSuccess: isDepositSuccesss,
   } = useContractWrite(wethGatewayConfig)
 
-  // const { write: transferWrite } = useContractWrite(transferConfig)
+  // Prepare contract write for borrow
+  const { config: borrowConfig } = usePrepareContractWrite({
+    address: AAVE_V3_POOL_ADDRESS,
+    abi: POOL_ABI,
+    functionName: 'borrow', // replace with actual function name
+    args: [GHO_TOKEN_ADDRESS, borrowAmount.toBigInt(), 2, 0, address],
+  })
 
-  const depositETHAndBorrowGHO = async () => {
-    if (!address) {
-      setStatus('Please connect your wallet.')
-      return
-    }
-
-    if (!signer) {
-      setStatus('Please connect your wallet.')
-      return
-    }
-
-    try {
-      // Create an instance of the Pool contract
-      setStatus('Swapping ETH for wETH...')
-      // await wethGatewayWrite?.()
-
-      // setStatus('Depositing ETH...')
-      // await depositWrite?.()
-
-      // setStatus('Borrowing GHO...')
-
-      // await borrowWrite?.()
-
-      setStatus('Transaction successful!')
-    } catch (error) {
-      console.error(error)
-      setStatus('An error occurred.')
-    }
-  }
-
-  const payNow = async () => {
-    if (!address) {
-      setStatus('Please connect your wallet.')
-      return
-    }
-
-    if (!signer) {
-      setStatus('Please connect your wallet.')
-      return
-    }
-
-    try {
-      // get GHO balance
-      const ghoBalance = await signer?.getBalance()
-
-      setStatus('Transaction successful!')
-    } catch (error) {
-      console.error(error)
-      setStatus('An error occurred.')
-    }
-  }
+  const {
+    write: borrowWrite,
+    data: borrowData,
+    isLoading: isBorrowLoading,
+    isSuccess: isBorrowSuccess,
+  } = useContractWrite(borrowConfig)
 
   return address ? (
     <>
@@ -151,23 +77,31 @@ export function InvoiceButton() {
       <div className="flex gap-4">
         <Button
           className="w-full"
-          variant="outline"
-          type="submit"
+          variant={isBorrowSuccess ? 'secondary' : 'default'}
+          disabled={isBorrowLoading || isBorrowSuccess}
           onClick={() => {
-            depositETHAndBorrowGHO()
+            borrowWrite?.()
           }}>
-          <ClockIcon className="mr-2 h-4 w-4" /> Borrow & Pay
+          {isBorrowSuccess ? (
+            <CheckIcon className="mr-2 h-4 w-4" />
+          ) : (
+            <ClockIcon className="mr-2 h-4 w-4" />
+          )}
+          {isBorrowLoading
+            ? 'Borrowing...'
+            : isBorrowSuccess
+              ? 'Borrowed!'
+              : 'Borrow'}
         </Button>
         <Button
           className="w-full"
           type="submit"
           onClick={() => {
-            payNow()
+            console.log('transfer gho')
           }}>
           <CheckIcon className="mr-2 h-4 w-4" /> Pay now
         </Button>
       </div>
-      {status && <p className="mt-4 text-sm text-gray-500">{status}</p>}
     </>
   ) : (
     <ConnectKitButton.Custom>
