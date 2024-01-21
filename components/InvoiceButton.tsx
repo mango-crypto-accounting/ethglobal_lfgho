@@ -67,9 +67,9 @@ export function InvoiceButton() {
 
   const {
     write: wethGatewayWrite,
-    isError: isSupplyError,
-    isLoading: isSupplyLoading,
-    isSuccess: isSupplySuccesss,
+    isError: isDepositError,
+    isLoading: isDepositLoading,
+    isSuccess: isDepositSuccesss,
   } = useContractWrite(wethGatewayConfig)
 
   // const { write: transferWrite } = useContractWrite(transferConfig)
@@ -130,23 +130,23 @@ export function InvoiceButton() {
     <>
       <Button
         className="mb-4 w-full"
-        variant={isSupplySuccesss ? 'secondary' : 'default'}
-        disabled={isSupplyLoading || isSupplySuccesss}
+        variant={isDepositSuccesss ? 'secondary' : 'default'}
+        disabled={isDepositLoading || isDepositSuccesss}
         onClick={() => {
           wethGatewayWrite?.()
         }}>
-        {isSupplySuccesss ? (
+        {isDepositSuccesss ? (
           <CheckIcon className="mr-2 h-4 w-4" />
         ) : (
           <BanknoteIcon className="mr-2 h-4 w-4" />
         )}
-        {isSupplyLoading
-          ? 'Supplying...'
-          : isSupplySuccesss
-            ? 'Supplied!'
-            : isSupplyError
-              ? 'Supply failed'
-              : 'Supply'}
+        {isDepositLoading
+          ? 'Depositing...'
+          : isDepositSuccesss
+            ? 'Deposited!'
+            : isDepositError
+              ? 'Deposit failed'
+              : 'Deposit'}
       </Button>
       <div className="flex gap-4">
         <Button
