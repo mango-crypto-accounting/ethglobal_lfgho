@@ -15,12 +15,13 @@ const pageLayout: PageLayout = {
     display: 'flex',
     justifyContent: 'center',
     width: '100%',
+    overflowY: 'hidden',
   }),
 }
 
 export default function InvoicePDF({ pdfUrl }: { pdfUrl: string }) {
   return (
-    <div className="max-w-[600px] overflow-y-hidden rounded-md p-6 shadow-lg">
+    <div className="max-w-[600px] overflow-hidden rounded-md p-6 shadow-lg">
       <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
         <Viewer
           fileUrl={pdfUrl}
