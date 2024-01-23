@@ -18,7 +18,7 @@ export default function Invoice({ invoice }: InvoicePageProps) {
   const transition = {
     type: 'spring',
     stiffness: 300,
-    damping: 20,
+    damping: 25,
     duration: 0.3,
   }
 
@@ -37,6 +37,9 @@ export default function Invoice({ invoice }: InvoicePageProps) {
         transition={transition}>
         <motion.div
           className="max-w-[400px]"
+          initial={{
+            x: -350,
+          }}
           animate={{
             x: isExpanded ? -350 : 0,
           }}
