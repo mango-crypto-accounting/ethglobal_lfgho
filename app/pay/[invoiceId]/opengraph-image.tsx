@@ -32,8 +32,12 @@ export default async function Image({
 
   const formattedInvoiceTotal = new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: invoice.currency.value,
+    currency: 'USD',
   }).format(invoice.total)
+
+  const formattedDueDate = new Intl.DateTimeFormat('en-US', {
+    dateStyle: 'medium',
+  }).format(new Date(invoice.dueDate))
 
   return new ImageResponse(
     (
@@ -55,10 +59,13 @@ export default async function Image({
         <div
           style={{
             color: '#2C478C',
+            display: 'flex',
+            flexDirection: 'column',
           }}>
-          {invoice.issuer.name} has sent you an invoice for{' '}
-          <span style={{ fontWeight: 'bold' }}>{formattedInvoiceTotal}</span>{' '}
-          due on {invoice.dueDate}
+          <span>{invoice.issuer.name} has sent you an invoice</span>
+          <span style={{ fontWeight: 'bold' }}>
+            for {formattedInvoiceTotal} due on {formattedDueDate}
+          </span>
         </div>
       </div>
     ),
