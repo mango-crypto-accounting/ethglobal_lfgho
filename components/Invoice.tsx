@@ -35,9 +35,14 @@ export default function Invoice({ invoice }: InvoicePageProps) {
           width: isExpanded ? `calc(100% - 350px)` : '50%',
         }}
         transition={transition}>
-        <div className="max-w-[400px]">
+        <motion.div
+          className="max-w-[400px]"
+          animate={{
+            x: isExpanded ? -350 : 0,
+          }}
+          transition={transition}>
           <InvoiceSSR className="w-full" invoice={invoice} />
-        </div>
+        </motion.div>
       </motion.div>
       <motion.div
         animate={{
