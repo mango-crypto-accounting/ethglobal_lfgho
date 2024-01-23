@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
-import Invoice, { TInvoice } from '@/components/Invoice'
+import Invoice from '@/components/Invoice'
+import { TInvoice } from '@/lib/types'
 
 export const revalidate = 1800 // revalidate at most every half hour
 

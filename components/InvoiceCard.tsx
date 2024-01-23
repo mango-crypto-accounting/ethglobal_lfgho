@@ -29,8 +29,8 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { toast } from '@/components/ui/use-toast'
+import { TInvoice } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { TInvoice } from './Invoice'
 import { InvoiceButton } from './InvoiceButton'
 import InvoiceDetails from './InvoiceDetails'
 import Web3Connect from './Web3Connect'
@@ -116,7 +116,7 @@ export default function InvoiceCard({
     })
   }
   return (
-    <div className="flex flex-col justify-end gap-4">
+    <div className="flex flex-col items-end justify-end gap-4">
       <Web3Connect />
 
       <Card className={className} {...props}>
