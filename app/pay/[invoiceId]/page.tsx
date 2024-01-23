@@ -32,7 +32,6 @@ export async function generateMetadata({
 
   return {
     title: `${invoice.issuer.name} has sent you an invoice`,
-    metadataBase: new URL(`https://invoice3.xyz`),
   }
 }
 

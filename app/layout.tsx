@@ -13,6 +13,7 @@ const fontSans = FontSans({
 export const metadata: Metadata = {
   title: 'Acctual LFGHO',
   description: 'Invoice & pay in GHO',
+  metadataBase: new URL(`https://invoice3.xyz`),
 }
 
 export default function RootLayout({
