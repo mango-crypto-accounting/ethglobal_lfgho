@@ -1,5 +1,5 @@
 import React from 'react'
-import { TInvoice } from './Invoice'
+import { TInvoice } from '@/lib/types'
 
 export default function InvoiceDetails({ invoice }: { invoice: TInvoice }) {
   return (

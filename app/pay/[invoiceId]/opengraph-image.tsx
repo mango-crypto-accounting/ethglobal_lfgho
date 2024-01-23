@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og'
-import { TInvoice } from '@/components/Invoice'
+import { TInvoice } from '@/lib/types'
 
 export const runtime = 'edge'
 
