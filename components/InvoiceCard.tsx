@@ -28,7 +28,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { toast } from '@/components/ui/use-toast'
 import { TInvoice } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { InvoiceButton } from './InvoiceButton'
@@ -105,126 +104,114 @@ export default function InvoiceCard({
     resolver: zodResolver(FormSchema),
   })
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
-  }
   return (
     <div className="flex flex-col items-end justify-end gap-4">
       <Web3Connect />
 
       <Card className={className} {...props}>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <CardHeader>
-              <CardTitle>
-                <div className="flex justify-between">
-                  Invoice #{invoice.number} for{' '}
-                  {formatToLocalCurrency(invoice.total, 'en-US', 'USD')}
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid">
-              <InvoiceDetails invoice={invoice} />
-              {address && (
-                <FormField
-                  control={form.control}
-                  name="paymentMethod"
-                  defaultValue="GHO"
-                  render={({ field }) => (
-                    <FormItem className="mb-6 flex w-full flex-col">
-                      <FormLabel>Payment method</FormLabel>
-                      <Popover open={open} onOpenChange={setOpen}>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className={cn(
-                                'w-full justify-between',
-                                !field.value && 'text-muted-foreground',
-                              )}
-                              ref={(node) => {
-                                if (node) setTriggerWidth(node.offsetWidth)
-                              }}>
-                              <div className="flex items-center gap-2">
-                                <img
-                                  alt={field.value}
-                                  src={
-                                    tokens.find(
-                                      (token) => token.value === field.value,
-                                    )?.logo
-                                  }
-                                  className="h-5 w-5 rounded-full"
-                                />
-                                {field.value
-                                  ? tokens.find(
-                                      (token) => token.value === field.value,
-                                    )?.label
-                                  : 'Select a token'}
-                              </div>
-                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
+          <CardHeader>
+            <CardTitle>
+              <div className="flex justify-between">
+                Invoice #{invoice.number} for{' '}
+                {formatToLocalCurrency(invoice.total, 'en-US', 'USD')}
+              </div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="grid">
+            <InvoiceDetails invoice={invoice} />
+            {address && (
+              <FormField
+                control={form.control}
+                name="paymentMethod"
+                defaultValue="GHO"
+                render={({ field }) => (
+                  <FormItem className="mb-6 flex w-full flex-col">
+                    <FormLabel>Payment method</FormLabel>
+                    <Popover open={open} onOpenChange={setOpen}>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              'w-full justify-between',
+                              !field.value && 'text-muted-foreground',
+                            )}
+                            ref={(node) => {
+                              if (node) setTriggerWidth(node.offsetWidth)
+                            }}>
+                            <div className="flex items-center gap-2">
+                              <img
+                                alt={field.value}
+                                src={
+                                  tokens.find(
+                                    (token) => token.value === field.value,
+                                  )?.logo
+                                }
+                                className="h-5 w-5 rounded-full"
+                              />
+                              {field.value
+                                ? tokens.find(
+                                    (token) => token.value === field.value,
+                                  )?.label
+                                : 'Select a token'}
+                            </div>
+                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
 
-                        <PopoverContent
-                          className="max-w-full p-0"
-                          style={{
-                            width: triggerWidth,
-                          }}>
-                          <Command>
-                            <CommandInput
-                              placeholder="Search tokens..."
-                              className="h-9"
-                            />
-                            <CommandEmpty>No token found.</CommandEmpty>
-                            <CommandGroup>
-                              {tokens.map((token) => (
-                                <CommandItem
-                                  value={token.label}
-                                  key={token.value}
-                                  onSelect={() => {
-                                    form.setValue('paymentMethod', token.value)
-                                    setOpen(false)
-                                  }}>
-                                  <div className="flex items-center gap-2">
-                                    <img
-                                      alt={token.label}
-                                      src={token.logo}
-                                      className="h-5 w-5 rounded-full"
-                                    />
-                                    {token.label}
-                                  </div>
-                                  <CheckIcon
-                                    className={cn(
-                                      'ml-auto h-4 w-4',
-                                      token.value === field.value
-                                        ? 'opacity-100'
-                                        : 'opacity-0',
-                                    )}
+                      <PopoverContent
+                        className="max-w-full p-0"
+                        style={{
+                          width: triggerWidth,
+                        }}>
+                        <Command>
+                          <CommandInput
+                            placeholder="Search tokens..."
+                            className="h-9"
+                          />
+                          <CommandEmpty>No token found.</CommandEmpty>
+                          <CommandGroup>
+                            {tokens.map((token) => (
+                              <CommandItem
+                                value={token.label}
+                                key={token.value}
+                                onSelect={() => {
+                                  form.setValue('paymentMethod', token.value)
+                                  setOpen(false)
+                                }}>
+                                <div className="flex items-center gap-2">
+                                  <img
+                                    alt={token.label}
+                                    src={token.logo}
+                                    className="h-5 w-5 rounded-full"
                                   />
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
+                                  {token.label}
+                                </div>
+                                <CheckIcon
+                                  className={cn(
+                                    'ml-auto h-4 w-4',
+                                    token.value === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0',
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-              <InvoiceButton />
-            </CardContent>
-          </form>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+            <InvoiceButton invoice={invoice} />
+          </CardContent>
         </Form>
       </Card>
     </div>
