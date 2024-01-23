@@ -54,7 +54,7 @@ export function InvoiceButton({ invoice }: { invoice: TInvoice }) {
 
   const {
     write: wethGatewayWrite,
-    isError: isDepositError,
+
     isLoading: isDepositLoading,
     isSuccess: isDepositSuccesss,
   } = useContractWrite({
@@ -63,7 +63,6 @@ export function InvoiceButton({ invoice }: { invoice: TInvoice }) {
       const data = {
         address: address,
         amount: depositAmountInETH,
-        sendTo: sendTo,
       }
       toast({
         title: 'Deposit submitted! Payload:',
@@ -92,7 +91,10 @@ export function InvoiceButton({ invoice }: { invoice: TInvoice }) {
   } = useContractWrite({
     ...borrowConfig,
     onSuccess: () => {
-      const data = {}
+      const data = {
+        address: address,
+        amount: borrowAmount,
+      }
       toast({
         title: 'Borrow submitted! Payload:',
         description: (
