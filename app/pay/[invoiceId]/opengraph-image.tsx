@@ -30,6 +30,11 @@ export default async function Image({
 
   const invoice = (await res.json()) as TInvoice
 
+  const formattedInvoiceTotal = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: invoice.currency.value,
+  }).format(invoice.total)
+
   return new ImageResponse(
     (
       <div
@@ -49,12 +54,11 @@ export default async function Image({
         />
         <div
           style={{
-            display: 'flex',
             color: '#2C478C',
-            flexDirection: 'column',
           }}>
-          <span style={{ fontWeight: 800 }}>{invoice.issuer.name}</span>
-          <span>has sent you an invoice</span>
+          {invoice.issuer.name} has sent you an invoice for{' '}
+          <span style={{ fontWeight: 'bold' }}>{formattedInvoiceTotal}</span>{' '}
+          due on {invoice.dueDate}
         </div>
       </div>
     ),
