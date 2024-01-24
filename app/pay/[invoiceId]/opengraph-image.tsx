@@ -20,7 +20,7 @@ export default async function Image({
   )
 
   const imageData = (await fetch(
-    new URL('./background.png', import.meta.url),
+    new URL('./background.jpg', import.meta.url),
   ).then((res) => res.arrayBuffer())) as string
 
   if (!res.ok) {
