@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og'
+import { env } from '@/env.mjs'
 import { TInvoice } from '@/lib/types'
 
 export const runtime = 'edge'
@@ -15,7 +16,7 @@ export default async function Image({
   params: { invoiceId: string }
 }) {
   const { invoiceId } = params
-  const res = await fetch(`/${invoiceId}`)
+  const res = await fetch(`${env.ACCTUAL_INVOICE_API}/${invoiceId}`)
 
   const imageData = (await fetch(
     new URL('./background.jpg', import.meta.url),
