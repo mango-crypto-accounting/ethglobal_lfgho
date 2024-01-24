@@ -1,13 +1,12 @@
 import { Metadata } from 'next'
 import Invoice from '@/components/Invoice'
+import { env } from '@/env.mjs'
 import { TInvoice } from '@/lib/types'
 
 export const revalidate = 1800 // revalidate at most every half hour
 
 async function getData(invoiceId: string) {
-  const res = await fetch(
-    `https://us-central1-crypt-account-362116.cloudfunctions.net/invoice-generator/invoices/${invoiceId}`,
-  )
+  const res = await fetch(`${env.ACCTUAL_INVOICE_API}/${invoiceId}`)
 
   if (!res.ok) {
     // This will activate the closest `error.js` Error Boundary
@@ -25,9 +24,7 @@ export async function generateMetadata({
   const { invoiceId } = params
 
   // fetch data
-  const res = await fetch(
-    `https://us-central1-crypt-account-362116.cloudfunctions.net/invoice-generator/invoices/${invoiceId}`,
-  )
+  const res = await fetch(`${env.ACCTUAL_INVOICE_API}/${invoiceId}`)
   const invoice = (await res.json()) as TInvoice
 
   return {

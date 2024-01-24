@@ -15,9 +15,7 @@ export default async function Image({
   params: { invoiceId: string }
 }) {
   const { invoiceId } = params
-  const res = await fetch(
-    `https://us-central1-crypt-account-362116.cloudfunctions.net/invoice-generator/invoices/${invoiceId}`,
-  )
+  const res = await fetch(`/${invoiceId}`)
 
   const imageData = (await fetch(
     new URL('./background.jpg', import.meta.url),
