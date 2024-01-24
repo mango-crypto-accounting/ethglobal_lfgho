@@ -12,6 +12,7 @@ import { TInvoice } from '@/lib/types'
 import POOL_ABI from '@/lib/web3/erc20ABI.json'
 import GHO_ABI from '@/lib/web3/ghoABI.json'
 import WETH_GATEWAY_ABI from '@/lib/web3/wethGatewayABI.json'
+import { SuccessDialog } from './SuccessDialog'
 
 const WETH_GATEWAWY_ADDRESS = '0x387d311e47e80b498169e6fb51d3193167d89F7D'
 const AAVE_V3_POOL_ADDRESS = '0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951'
@@ -20,6 +21,7 @@ const GHO_TOKEN_ADDRESS = '0xc4bF5CbDaBE595361438F8c6a187bDc330539c60'
 const ETH_TO_USDC_EXCHANGE_RATE = 2200
 
 export function InvoiceButton({ invoice }: { invoice: TInvoice }) {
+  const [successModalVisible, setSuccessModalVisible] = useState(false)
   const { address } = useAccount()
   // Step state
   const [step, setStep] = useState('deposit') // 'deposit', 'borrow', 'send'
@@ -128,13 +130,14 @@ export function InvoiceButton({ invoice }: { invoice: TInvoice }) {
         sendTo: sendTo,
       }
       toast({
-        title: 'Transfer submitted! Payload:',
+        title: 'GHO sent! Payload:',
         description: (
           <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
             <code className="text-white">{JSON.stringify(data, null, 2)}</code>
           </pre>
         ),
       })
+      setSuccessModalVisible(true)
     },
   })
 
@@ -220,6 +223,14 @@ export function InvoiceButton({ invoice }: { invoice: TInvoice }) {
           </Button>
         </motion.div>
       )}
+      <SuccessDialog
+        open={successModalVisible}
+        setOpen={setSuccessModalVisible}
+        senderLogo={
+          invoice.issuer.logo.length ? invoice.issuer.logo : undefined
+        }
+        receiverLogo={invoice.client.logo ? invoice.client.logo : undefined}
+      />
     </>
   ) : (
     <ConnectKitButton.Custom>
