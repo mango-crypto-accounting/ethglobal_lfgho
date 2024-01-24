@@ -28,8 +28,7 @@ export function InvoiceButton({ invoice }: { invoice: TInvoice }) {
 
   const sendTo = invoice.crypto.walletAddress
 
-  // const totalInUSDC = ethers.utils.parseUnits(String(invoice.total), 'ether') // Total in USDC
-  const totalInUSDC = ethers.utils.parseUnits('1', 'ether') // Total in USDC
+  const totalInUSDC = ethers.utils.parseUnits(String(invoice.total), 'ether') // Total in USDC
 
   // Assuming 1 GHO = 1 USDC for simplicity
   const ltvRatio = 0.6 // 60%
